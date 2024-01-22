@@ -2,7 +2,9 @@
 ## Uruchamianie
 
 Wymagania: zainstalowany Docker, w IDE Lombok z włączonym `Annotation processing`.
+
 Konfiguracja: ścieżka do miejsca na pliki ocen jest ustawiana jako `voteFile.location` w `application.properties`.
+
 Wykonaj `docker compose up` w katalogu głównym projektu. Gdy wstanie PostgreSQL, uruchom `IngApplication`.
 
 ## Uwagi
