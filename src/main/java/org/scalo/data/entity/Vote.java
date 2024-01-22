@@ -36,6 +36,7 @@ public class Vote {
         this.rating = rating;
         this.genre = genre;
     }
+
     private void setId(Long id) {
     }
 }

@@ -13,10 +13,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+import static org.scalo.service.FileService.SUFFIX;
+
 @Slf4j
 @Service
 public class FileWatcherService {
-    public static final String SUFFIX = ".csv";
     public static final String VOTE_FILE_PREFIX = "tuneheaven-songs-";
     private VoteService voteService;
     private WatchService watchService;
@@ -34,7 +35,7 @@ public class FileWatcherService {
     @PostConstruct
     public void init() {
         try {
-            log.info("FileWatcherService started");
+            log.debug("FileWatcherService starting in: {}", voteFileLocation);
             watchService = FileSystems.getDefault().newWatchService();
             watchedDir = Paths.get(voteFileLocation);
             watchedDir.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
@@ -57,16 +58,16 @@ public class FileWatcherService {
 
                 for (WatchEvent<?> event: key.pollEvents()) {
                     String fileName = event.context().toString();
-                    log.info("File noticed: " + fileName);
+                    log.debug("File noticed: {}", fileName);
                     if (fileName.startsWith(VOTE_FILE_PREFIX)) {
                         String dateString = fileName.substring(VOTE_FILE_PREFIX.length(), fileName.lastIndexOf(SUFFIX));
                         try {
                             LocalDate localDate = LocalDate.parse(dateString, DateTimeFormatter.ISO_LOCAL_DATE);
                             Path fullPath = Path.of(voteFileLocation, fileName);
                             voteService.importVotes(localDate, fullPath);
-                            log.info("Import started: " + fullPath);
+                            log.info("Vote import started: {}", fullPath);
                         } catch (DateTimeParseException exception) {
-                            log.error("Parsing " + dateString, exception);
+                            log.warn("Parsing " + dateString, exception);
                         }
                     }
                 }
@@ -79,7 +80,7 @@ public class FileWatcherService {
 
     @PreDestroy
     public void destroy() {
-        log.info("FileWatcherService stopping");
+        log.debug("FileWatcherService stopping");
         keepWorking = false;
         if (thread != null) {
             thread.interrupt();

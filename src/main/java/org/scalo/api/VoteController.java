@@ -26,13 +26,13 @@ public class VoteController {
             @PathVariable String songId,
             @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate since,
             @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate until) {
-        log.info("avg for " + songId);
+        log.debug("avg, songId = {}, since = {}, until = {}", songId, since, until);
         return voteService.getAverage(songId, since, until);
     }
 
     @GetMapping("/{songId}/avg-three-months")
     public List<MonthlyAverageDto> avgThreeMonths(@PathVariable String songId) {
-        log.info("avgThreeMonths for " + songId);
+        log.debug("avgThreeMonths, songId = {}", songId);
         return voteService.getAveragePrecedingMonths(songId, LocalDate.now(), 3);
     }
 }
